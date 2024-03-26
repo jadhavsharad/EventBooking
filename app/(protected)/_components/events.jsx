@@ -2,13 +2,37 @@
 import Image from 'next/image';
 import React, { useState } from 'react';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from "@nextui-org/react";
-import {CloudQuest, CyberNex, DSATussle, InvestAThon, Vivaan} from '@/app/(protected)/_assets/Images'
+import {
+  Aadhav,
+  Aahvahan,
+  BattleOfWits,
+  BEETech,
+  BeyondBranches,
+  CyberConclave,
+  LuckPathi,
+  RockABlast,
+  Solstice,
+  Vivaan23,
+  CloudQuest,
+  CyberNex,
+  DSATussle,
+  InvestAThon,
+  Vivaan,
+} from '@/app/(protected)/_assets/Images'
 
 const Event = () => {
   const { isOpen: isModalOpen, onOpen: openModal, onOpenChange } = useDisclosure();
   const [selectedModalIndex, setSelectedModalIndex] = useState(null);
 
-  const handleOpenModal = (index) => {
+  const handlePopularModal = (index) => {
+    setSelectedModalIndex(index);
+    openModal();
+  };
+  const handlePastModal = (index) => {
+    setSelectedModalIndex(index);
+    openModal();
+  };
+  const handleUpcomingModal = (index) => {
     setSelectedModalIndex(index);
     openModal();
   };
@@ -21,7 +45,7 @@ const Event = () => {
       eventName: 'Harmonix',
       discription: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Doloribus minus modi impedit.Lorem ipsum, dolor sit amet consectetur adipisicing elit. Doloribus minus modi impedit.',
       registrationFees: '250',
-      registrationLink:'https://google.com'
+      registrationLink: 'https://google.com'
     },
     {
       Image: CyberNex,
@@ -29,7 +53,7 @@ const Event = () => {
       eventName: '',
       discription: '',
       registrationFees: '',
-      registrationLink:''
+      registrationLink: ''
     },
     {
       Image: DSATussle,
@@ -37,7 +61,7 @@ const Event = () => {
       eventName: '',
       discription: '',
       registrationFees: '',
-      registrationLink:''
+      registrationLink: ''
     },
     {
       Image: InvestAThon,
@@ -45,7 +69,7 @@ const Event = () => {
       eventName: '',
       discription: '',
       registrationFees: '',
-      registrationLink:''
+      registrationLink: ''
     },
     {
       Image: Vivaan,
@@ -56,8 +80,88 @@ const Event = () => {
     },
   ]
 
-  // const pastEvents =[{}]
-  // const upcomingEvents = [{}]
+  const pastEvents =[
+    {
+      Image: Aadhav,
+      clubName: 'AI Club',
+      eventName: 'Harmonix',
+      discription: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Doloribus minus modi impedit.Lorem ipsum, dolor sit amet consectetur adipisicing elit. Doloribus minus modi impedit.',
+      registrationFees: '250',
+      registrationLink: 'https://google.com'
+    },
+    {
+      Image: Aahvahan,
+      clubName: 'iOS Club',
+      eventName: '',
+      discription: '',
+      registrationFees: '',
+      registrationLink: ''
+    },
+    {
+      Image: BattleOfWits,
+      clubName: 'DSC Club',
+      eventName: '',
+      discription: '',
+      registrationFees: '',
+      registrationLink: ''
+    },
+    {
+      Image: BEETech,
+      clubName: 'GDSC Club',
+      eventName: '',
+      discription: '',
+      registrationFees: '',
+      registrationLink: ''
+    },
+    {
+      Image: Vivaan23,
+      clubName: 'Blockchain Club',
+      eventName: 'Cryptex',
+      discription: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Doloribus minus modi impedit.Lorem ipsum, dolor sit amet consectetur adipisicing elit. Doloribus minus modi impedit.',
+      registrationFees: '250'
+    },
+  ]
+  const upcomingEvents = [
+    {
+      Image: BeyondBranches,
+      clubName: 'AI Club',
+      eventName: 'Harmonix',
+      discription: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Doloribus minus modi impedit.Lorem ipsum, dolor sit amet consectetur adipisicing elit. Doloribus minus modi impedit.',
+      registrationFees: '250',
+      registrationLink: 'https://google.com'
+    },
+    {
+      Image: CyberConclave,
+      clubName: 'iOS Club',
+      eventName: '',
+      discription: '',
+      registrationFees: '',
+      registrationLink: ''
+    },
+    {
+      Image: LuckPathi,
+      clubName: 'DSC Club',
+      eventName: '',
+      discription: '',
+      registrationFees: '',
+      registrationLink: ''
+    },
+    {
+      Image: RockABlast,
+      clubName: 'GDSC Club',
+      eventName: '',
+      discription: '',
+      registrationFees: '',
+      registrationLink: ''
+    },
+    {
+      Image: Solstice,
+      clubName: 'Blockchain Club',
+      eventName: 'Cryptex',
+      discription: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Doloribus minus modi impedit.Lorem ipsum, dolor sit amet consectetur adipisicing elit. Doloribus minus modi impedit.',
+      registrationFees: '250'
+    },
+  ]
 
   return (
     <div className='py-5 px-10 text-sm'>
@@ -80,7 +184,7 @@ const Event = () => {
             <div className='w-52 h-72 text-xs bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl relative popularClubsAndEvents'>
               <Image width={200} height={300} src={data.Image} alt='image' className='h-full w-full rounded-[inherit] object-cover' />
               <div className='w-full h-full bg-gradient-to-b from-transparent via-transparent to-black  absolute top-0 left-0 rounded-[inherit]'></div>
-              <div onClick={() => handleOpenModal(index)} className='px-4 py-2 cursor-pointer focus-visible:scale-90 focus:scale-90 active:scale-90 duration-300 rounded-full border border-zinc-300 dark:border-zinc-700 bg-zinc-200 dark:bg-zinc-800 absolute bottom-4 left-4'>
+              <div onClick={() => handlePopularModal(index)} className='px-4 py-2 cursor-pointer focus-visible:scale-90 focus:scale-90 active:scale-90 duration-300 rounded-full border border-zinc-300 dark:border-zinc-700 bg-zinc-200 dark:bg-zinc-800 absolute bottom-4 left-4'>
                 <button >{data.clubName}</button>
               </div>
             </div>
@@ -132,12 +236,12 @@ const Event = () => {
       <hr className='my-2 border-none' />
 
       <div className='grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-4 justify-center items-center'>
-        {popularClubsAndEvents.map((data, index) => (
+        {pastEvents.map((data, index) => (
           <div key={index} className='w-52 h-72 text-xs bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl relative'>
             <Image width={200} height={300} src={data.Image} alt='image' className='h-full w-full rounded-[inherit] object-cover' />
             <div className='w-full h-full bg-gradient-to-b from-transparent via-transparent to-black  absolute top-0 left-0 rounded-[inherit]'></div>
             <div className='px-4 py-2 rounded-full border border-zinc-300 dark:border-zinc-700 bg-zinc-200 dark:bg-zinc-800 absolute bottom-4 left-4'>
-            <button onClick={() => handleOpenModal(index)} >{data.clubName}</button>
+              <button onClick={() => handlePastModal(index)} >{data.clubName}</button>
             </div>
           </div>
         ))}
@@ -160,15 +264,15 @@ const Event = () => {
       <hr className='my-2 border-none' />
 
       <div className='grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-4 justify-center items-center'>
-        {popularClubsAndEvents.map((data, index) => (
+        {upcomingEvents.map((data, index) => (
           <div key={index} className='w-52 h-72 text-xs bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl relative'>
             <Image width={200} height={300} src={data.Image} alt='image' className='h-full w-full rounded-[inherit] object-cover' />
             <div className='w-full h-full bg-gradient-to-b from-transparent via-transparent to-black  absolute top-0 left-0 rounded-[inherit]'></div>
             <div className='px-4 py-2 rounded-full border border-zinc-300 dark:border-zinc-700 bg-zinc-200 dark:bg-zinc-800 absolute bottom-4 left-4'>
-            <button onClick={() => handleOpenModal(index)} >{data.clubName}</button>
+              <button onClick={() => handleUpcomingModal(index)} >{data.clubName}</button>
             </div>
           </div>
-          
+
         ))}
       </div>
 

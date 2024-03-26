@@ -43,8 +43,6 @@ const HomePage = () => {
         <Banner />
         <Event />
       </section>
-      <section>
-      </section>
     </div>
   );
 };
