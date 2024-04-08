@@ -30,8 +30,9 @@ const HomePage = () => {
       url: '/user/about',
       icons: ''
     }
+    
   ]
-
+  
   const username = { username: 'Navneet Agrawal', }
 
 

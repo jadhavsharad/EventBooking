@@ -1,11 +1,35 @@
-import React from 'react';
-
+'use client'
+import React, { useLayoutEffect, useMemo, useState } from 'react';
+import AuthService from '@/services/authService';
+import Auth from '@/components/Auth/auth'
+import { useRouter } from 'next/navigation';
 const Layout = ({ children }) => {
-    return (
+
+  const authService = useMemo(() => new AuthService(), []);
+  const currentUser = authService.getCurrentUser()
+  const redirect = useRouter()
+
+  const [userStatus, setUserStatus] = useState(false)
+
+  useLayoutEffect(() => {
+    setUserStatus(false)
+    if (currentUser?.roles[0] !== 'ROLE_ADMIN') {
+      setUserStatus(false)
+    }
+    if (currentUser?.roles[0] === 'ROLE_ADMIN') {
+      setUserStatus(true)
+    }
+  }, [currentUser, redirect])
+  return (
+    <>
+      {
+        userStatus &&
         <div className='overflow-x-hidden'>
-            {children}
+          {children}
         </div>
-    );
+      }
+    </>
+  );
 };
 
-export default Layout;
+export default Auth(Layout);
