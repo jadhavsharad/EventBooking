@@ -1,35 +1,35 @@
 'use client'
-import React, { useLayoutEffect, useMemo, useState } from 'react';
-import AuthService from '@/services/authService';
-import Auth from '@/components/Auth/auth'
-import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import useAuthCheck from '@/components/Auth/authCheck'
+
+
 const Layout = ({ children }) => {
+    const { isAdmin, isUser } = useAuthCheck();
 
-  const authService = useMemo(() => new AuthService(), []);
-  const currentUser = authService.getCurrentUser()
-  const redirect = useRouter()
+    // User Ready Status
+    const [loggedStatus, setLoggedStatus] = useState(false);
+    useEffect(() => {
+        if (isAdmin()) {
+            setLoggedStatus(true)
+        }
 
-  const [userStatus, setUserStatus] = useState(false)
+    }, [setLoggedStatus]);
 
-  useLayoutEffect(() => {
-    setUserStatus(false)
-    if (currentUser?.roles[0] !== 'ROLE_ADMIN') {
-      setUserStatus(false)
-    }
-    if (currentUser?.roles[0] === 'ROLE_ADMIN') {
-      setUserStatus(true)
-    }
-  }, [currentUser, redirect])
-  return (
-    <>
-      {
-        userStatus &&
-        <div className='overflow-x-hidden'>
-          {children}
-        </div>
-      }
-    </>
-  );
+    return (
+        <>
+            {
+                loggedStatus &&
+                (isAdmin ?
+                    <div className='overflow-x-hidden'>
+                        {children}
+                    </div>
+                    : isUser() ?
+                        useRouter().push('/user')
+                        : useRouter().push('/')
+                )
+            }
+        </>
+    );
 };
 
-export default Auth(Layout);
+export default Layout;

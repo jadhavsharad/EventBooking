@@ -31,13 +31,10 @@ const HomePage = () => {
     }
   ]
 
-  const username = { username: 'Navneet Agrawal', }
-
-
-
+ 
   return (
     <div className='bg-zinc-50 dark:bg-zinc-950'>
-      <Header NavigationItems={NavItems} User={username} />
+      <Header NavigationItems={NavItems}  />
       <section className='min-h-svh bg-zinc-50 dark:bg-zinc-950 text-black dark:text-white'>
         <Banner />
         <Event />

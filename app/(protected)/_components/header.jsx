@@ -5,20 +5,23 @@
 
 'use client'
 import { usePathname, useRouter } from "next/navigation";
-import React, { useMemo } from 'react';
+import React, { useLayoutEffect, useMemo, useState } from 'react';
 import { Raleway } from "next/font/google";
 import AuthService from "@/services/authService"
-const raleway = Raleway({subsets: ['latin']})
+
+const raleway = Raleway({ subsets: ['latin'] })
 
 
-const Header = ({ NavigationItems, User }) => {
 
+const Header = ({ NavigationItems }) => {
     const authService = useMemo(() => new AuthService(), [])
+    const currentUser = authService.getCurrentUser()
 
     const router = useRouter()
     const logout = () => {
         authService
-        .logout()
+            .logout()
+        router.push('/')
     }
 
     const pathname = usePathname()
@@ -31,17 +34,17 @@ const Header = ({ NavigationItems, User }) => {
                 </div>
                 <div className="flex gap-2 items-center">
                     <nav>
-                        <ul className="flex items-center gap-4">
+                        <ul className="flex gap-4">
                             {NavigationItems.map((NavItems, index) => (
                                 <li key={index}> <a href={NavItems.url} className={`${(pathname === NavItems.url) ? 'text-orange-400 saturate-200' : 'text-black dark:text-white'}`} >{NavItems.label}</a></li>
                             ))}
-                            <li className="cursor-pointer" onClick={logout}>Logout</li>
+                            <li onClick={logout} className="cursor-pointer">Logout</li>
                         </ul>
                     </nav>
                     <div className='w-px h-8 bg-zinc-400 dark:bg-zinc-600'></div>
                     <div>
                         {
-                            pathname === '/admin' ? <h1><a href='/admin/dashboard'>{User.username}</a></h1> : <h1>{User.username}</h1>
+                            pathname === '/admin' ? <h1><a href='/admin/dashboard'>{currentUser.name}</a></h1> : <h1>{currentUser.name}</h1>
                         }
                     </div>
                 </div>

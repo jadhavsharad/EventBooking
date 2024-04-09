@@ -35,8 +35,9 @@ const Signup = () => {
         authService
             .signup(formData)
             .then((data) => {
-                setMessage(data.message)
-                setStatusCode(data.statusCode)
+                const { message, statusCode } = data
+                setMessage(message)
+                setStatusCode(statusCode)
                 console.log(data)
             })
             .catch((error) => {

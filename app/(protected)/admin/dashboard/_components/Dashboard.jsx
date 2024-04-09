@@ -1,9 +1,46 @@
 'use client'
 import { PlusIcon } from '@radix-ui/react-icons';
 import { CiSearch } from "react-icons/ci";
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import AddNewEvents from './NewEvents'
+import AuthService from "@/services/authService"
+import axios from 'axios';
+
+
 const Dashboard = () => {
+    const [events, setEvents] = useState([]);
+    const [loading, setLoading] = useState(true)
+
+    useLayoutEffect(() => {
+        const fetchEvents = async () => {
+            setLoading(true)
+            try {
+                await axios
+                    .get('http://localhost:8000/api/getEvents')
+                    .then((response) => {
+                        setEvents(response.data);
+                        setLoading(false)
+                    }
+                    )
+                    .catch(error => {
+                        console.log(error)
+                    }
+                    )
+            }
+            catch (error) {
+                console.log(error)
+            }
+        }
+
+        fetchEvents()
+
+    }, [])
+
+    console.log(!loading && (events[0]))
+
+
+    const authService = useMemo(() => new AuthService(), [])
+    const currentUser = authService.getCurrentUser()
 
     const [isModalOpen, setIsModalOpen] = useState(true)
     const [upcomingDates, setUpcomingDates] = useState([]);
@@ -36,19 +73,17 @@ const Dashboard = () => {
 
     const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-    const user = {
-        username: 'Navneet Agrawal'
-    }
-
     const handleModalOpen = () => {
         if (!isModalOpen) {
             document.getElementById('addEventModal').classList.add('hidden')
-        }else{
+        } else {
             document.getElementById('addEventModal').classList.remove('hidden')
         }
-        
+
         setIsModalOpen(!isModalOpen)
     }
+
+
 
     return (
         <div className='relative bg-zinc-50 dark:bg-zinc-950 text-zinc-950 dark:text-zinc-50  flex justify-center gap-0 min-h-svh p-2 overflow-hidden select-none'>
@@ -59,23 +94,35 @@ const Dashboard = () => {
                 </form>
                 <div className='text-zinc-950 dark:text-zinc-50 py-2 w-full flex items-center justify-between'>
                     <div>
-                        <h1 className='font-medium text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl'>Good Morning, {user.username}</h1>
+                        <h1 className='font-medium text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl'>Good Morning, {currentUser.name}</h1>
                         <small>Manage Events and Venues</small>
                     </div>
                     <div onClick={handleModalOpen} className='active:scale-90 duration-300 bg-sky-200 border border-sky-400 dark:bg-sky-800 dark:border-sky-600 text-blue-900 dark:text-sky-100 px-4 py-2 rounded-full cursor-pointer'>
-                        <button  className='flex items-center gap-2 text-xs '>Event<PlusIcon className='rounded-full' /></button>
+                        <button className='flex items-center gap-2 text-xs '>Event<PlusIcon className='rounded-full' /></button>
                     </div>
                 </div>
                 <hr className='border border-zinc-100  dark:border-zinc-900 w-full my-3' />
                 <div>
                     <h1>My Events</h1>
                 </div>
-                <div className='w-full my-2'>
-                    <div className='w-full h-72 border border-zinc-200 dark:border-zinc-800 rounded-3xl bg-zinc-100 dark:bg-zinc-900'></div>
-                </div>
-                <div className='w-full my-2'>
-                    <div className='w-full h-72 border border-zinc-200 dark:border-zinc-800 rounded-3xl bg-zinc-100 dark:bg-zinc-900'></div>
-                </div>
+                <>
+                    {
+                        !loading &&
+                        (
+                            events.map((events) => (
+                                <div key={events._id} className='w-full my-2'>
+                                    <div className='w-full h-72 border border-zinc-200 dark:border-zinc-800 rounded-3xl bg-zinc-100 dark:bg-zinc-900 overflow-hidden'>
+                                        {!loading &&
+                                            <img src={`data:${events.contentType};base64,${Buffer.from(events.widescreenPoster.data).toString('base64')}`} alt="banner" />
+                                        }
+                                    </div>
+                                </div>
+                            ))
+                        )
+                    }
+                </>
+
+
             </div>
             <div className='w-1/3 min-h-svh rounded-3xl border border-zinc-200 dark:border-zinc-800 hidden lg:flex flex-col gap-4 p-4'>
                 <h1 className='text-sm'>Upcoming Event Details</h1>
