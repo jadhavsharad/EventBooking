@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 const Layout = ({ children }) => {
 
     const { isAdmin, isUser } = useAuthCheck();
-    
+
     // User Ready Status
     const [loggedStatus, setLoggedStatus] = useState(false);
 
@@ -14,7 +14,9 @@ const Layout = ({ children }) => {
         if (isUser()) {
             setLoggedStatus(true)
         }
-    });
+    }, [setLoggedStatus, isUser]);
+
+    const router = useRouter()
 
     return (
         <>
@@ -24,8 +26,8 @@ const Layout = ({ children }) => {
                         {children}
                     </div>
                     : isAdmin() ?
-                        useRouter().push('/admin')
-                        : useRouter().push('/')
+                        router.push('/admin')
+                        : router.push('/')
                 )}
         </>
     );

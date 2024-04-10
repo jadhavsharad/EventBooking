@@ -1,6 +1,7 @@
 'use client'
 import React, { useEffect, useState } from 'react';
 import useAuthCheck from '@/components/Auth/authCheck'
+import { useRouter } from 'next/navigation';
 
 
 const Layout = ({ children }) => {
@@ -13,7 +14,9 @@ const Layout = ({ children }) => {
             setLoggedStatus(true)
         }
 
-    }, [setLoggedStatus]);
+    }, [setLoggedStatus, isAdmin]);
+
+    const router = useRouter()
 
     return (
         <>
@@ -24,8 +27,8 @@ const Layout = ({ children }) => {
                         {children}
                     </div>
                     : isUser() ?
-                        useRouter().push('/user')
-                        : useRouter().push('/')
+                        router.push('/user')
+                        : router.push('/')
                 )
             }
         </>

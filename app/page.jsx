@@ -73,7 +73,7 @@ const LandingPage = () => {
     }
 
     setLoggedStatus(true)
-  }, []);
+  }, [setLoggedStatus, isAdmin, isUser, router]);
 
   const handleSignUp = (e) => {
     e.preventDefault()

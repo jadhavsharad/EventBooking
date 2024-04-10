@@ -20,7 +20,7 @@ function useAuthCheck() {
     if (!isAdmin() && !isUser()) {
       router.push('/');
     }
-  }, [currentUser, router]);
+  });
 
   // Expose isAdmin and isUser for conditional rendering or other checks
   return { isAdmin, isUser };
