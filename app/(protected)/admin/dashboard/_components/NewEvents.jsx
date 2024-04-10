@@ -2,7 +2,10 @@
 import { Button } from '@nextui-org/react';
 import axios from 'axios'
 import React, { useState } from 'react';
-import {  toast } from 'sonner'
+import { toast } from 'sonner'
+import authHeader from '@/services/authHeader';
+
+
 
 const AddNewEvents = ({ ...props }) => {
 
@@ -17,7 +20,8 @@ const AddNewEvents = ({ ...props }) => {
     time: "",
     description: "",
     widescreenPoster: null,
-    potraitPoster: null
+    potraitPoster: null,
+    qrCode: null
   });
 
   const handleData = (e) => {
@@ -47,6 +51,7 @@ const AddNewEvents = ({ ...props }) => {
     try {
       await axios.post('http://localhost:8000/api/event', formData, {
         headers: {
+          ...authHeader(),
           'Content-Type': 'multipart/form-data',
         },
       });
@@ -56,6 +61,8 @@ const AddNewEvents = ({ ...props }) => {
       console.log(error);
     }
   }
+
+
 
   return (
     <div>
@@ -95,7 +102,7 @@ const AddNewEvents = ({ ...props }) => {
               </li>
             </ul>
 
-            <ul className='w-full'>
+            <ul className='w-full space-y-3'>
               <li className='flex flex-col gap-2 text-xs w-full'>
                 <label className='font-semibold text-sm' htmlFor='registrationFees'>Enter Registration Fees</label>
                 <input required onChange={handleData} className='bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 py-2 outline-none rounded-full' type="number" autoComplete='off' name="registrationFees" id="registrationFees" />
@@ -120,13 +127,17 @@ const AddNewEvents = ({ ...props }) => {
               <div className='flex gap-4'>
                 <li className='flex flex-col gap-2 text-xs w-full'>
                   <label className='font-semibold text-sm' htmlFor='widescreenPoster'>Select Widescreen Poster</label>
-                  <input  onChange={handleData} className='bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 py-2 outline-none rounded-full' type="file" autoComplete='off' name="widescreenPoster" id="widescreenPoster" />
+                  <input onChange={handleData} className='dark:file:bg-zinc-700 dark:file:text-white file:border file:border-zinc-300 dark:file:border-zinc-600 file:border-solid file:py-1 file:px-4 file:mx-2 file:rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 py-2 outline-none rounded-full' type="file" autoComplete='off' name="widescreenPoster" id="widescreenPoster" />
                 </li>
                 <li className='flex flex-col gap-2 text-xs w-full'>
                   <label className='font-semibold text-sm' htmlFor='potraitPoster'>Select Potrait Poster</label>
-                  <input  onChange={handleData} className='bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 py-2 outline-none rounded-full' type="file" autoComplete='off' name="potraitPoster" id="potraitPoster" />
+                  <input onChange={handleData} className='dark:file:bg-zinc-700 dark:file:text-white file:border file:border-zinc-300 dark:file:border-zinc-600 file:border-solid file:py-1 file:px-4 file:mx-2 file:rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 py-2 outline-none rounded-full' type="file" autoComplete='off' name="potraitPoster" id="potraitPoster" />
                 </li>
               </div>
+              <li className='flex flex-col gap-2 text-xs w-full'>
+                <label className='font-semibold text-sm text-rose-600 saturate-200' htmlFor='qrCode'>! Select Registration QR Code</label>
+                  <input onChange={handleData} className='dark:file:bg-zinc-700 dark:file:text-white file:border file:border-zinc-300 dark:file:border-zinc-600 file:border-solid file:py-1 file:px-4 file:mx-2 file:rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 py-2 outline-none rounded-full' type="file" autoComplete='off' name="qrCode" id="qrCode" />
+              </li>
             </ul>
           </div>
           <Button type='reset' color='warning' className='float-right my-6 mx-2  text-zinc-50 dark:text-zinc-900'>Reset Data</Button>

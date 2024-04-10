@@ -6,6 +6,7 @@ const db = require("./model");
 const Role = db.role;
 const Event = require("./model/clubData.model");
 const multer = require("multer");
+const { authJwt } = require("./middlewares");
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -49,12 +50,15 @@ initial();
 const uploadImages = upload.fields([
   { name: "widescreenPoster", maxCount: 1 },
   { name: "potraitPoster", maxCount: 1 },
+  { name: "qrCode", maxCount: 1 },
 ]);
 
 // POST route to handle event creation with image uploads
-app.post("/api/event", uploadImages, async (req, res) => {
+app.post("/api/event", uploadImages, authJwt.verifyToken, async (req, res) => {
+  const userId = req.userId;
+  const eventData = req.body;
+  eventData.createdBy = userId;
   try {
-    const eventData = req.body;
     eventData.widescreenPoster = {
       data: req.files["widescreenPoster"][0].buffer,
       contentType: req.files["widescreenPoster"][0].mimetype,
@@ -63,8 +67,10 @@ app.post("/api/event", uploadImages, async (req, res) => {
       data: req.files["potraitPoster"][0].buffer,
       contentType: req.files["potraitPoster"][0].mimetype,
     };
-
-    console.log(eventData);
+    eventData.qrCode = {
+      data: req.files["qrCode"][0].buffer,
+      contentType: req.files["qrCode"][0].mimetype,
+    };
     const event = new Event(eventData);
     await event.save();
     res.status(201).send(event);
@@ -74,9 +80,13 @@ app.post("/api/event", uploadImages, async (req, res) => {
   }
 });
 
-app.get("/api/getEvents", async (req, res) => {
+app.get("/api/getEvents", authJwt.verifyToken, async (req, res) => {
   try {
-    const events = await Event.find();
+    const userId = req.userId;
+    const events = await Event.find({ createdBy: userId });
+    if (events.length < 1) {
+      return res.status(401).send({ message: "No Events Found." });
+    }
     res.status(200).send(events);
   } catch (error) {
     console.error(error);
@@ -84,6 +94,44 @@ app.get("/api/getEvents", async (req, res) => {
   }
 });
 
+app.get("/api/getUserEvents", async (req, res) => {
+  try {
+    const events = await Event.find(
+      {},
+      { createdBy: 0, widescreenPoster: 0, __v: 0 }
+    );
+    if(events.length < 1){
+      return res.status(401).send({message: "No Events Found"})
+    }
+    res.status(200).send(events);
+  } catch (error) {
+    res.status(500).send("Error Fetching Events");
+  }
+});
+
+app.get("/api/getEventBanners", async (req, res) => {
+  try {
+    const banner = await Event.find(
+      {},
+      {
+        widescreenPoster: 1,
+        date: 1,
+        time: 1,
+        category: 1,
+        seats: 1,
+        _id: 0,
+      }
+    )
+      .sort({ createdAt: -1 })
+      .limit(4);
+      if(banner.length < 1){
+        return res.status(401).send({message: "No Latest Events Found"})
+      }
+    res.status(200).send(banner);
+  } catch (error) {
+    res.status(500).send("Error Finding Banner");
+  }
+});
 // routes
 require("./routes/auth.routes")(app);
 require("./routes/user.routes")(app);

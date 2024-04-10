@@ -4,26 +4,30 @@ import { CiSearch } from "react-icons/ci";
 import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import AddNewEvents from './NewEvents'
 import AuthService from "@/services/authService"
-import axios from 'axios';
-
+import axios from 'axios'
+import authHeader from '@/services/authHeader';
+import Image from 'next/image';
 
 const Dashboard = () => {
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true)
+    const [message, setMessage] = useState(null)
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         const fetchEvents = async () => {
             setLoading(true)
+            setMessage(null)
             try {
                 await axios
-                    .get('http://localhost:8000/api/getEvents')
+                    .get('http://localhost:8000/api/getEvents', { headers: authHeader() })
                     .then((response) => {
                         setEvents(response.data);
                         setLoading(false)
                     }
                     )
                     .catch(error => {
-                        console.log(error)
+                        console.log(error.response.data.message)
+                        setMessage(error.response.data.message)
                     }
                     )
             }
@@ -36,7 +40,6 @@ const Dashboard = () => {
 
     }, [])
 
-    console.log(!loading && (events[0]))
 
 
     const authService = useMemo(() => new AuthService(), [])
@@ -46,7 +49,7 @@ const Dashboard = () => {
     const [upcomingDates, setUpcomingDates] = useState([]);
     const [currentDateIndex, setCurrentDateIndex] = useState(null);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         const generateUpcomingDates = () => {
             const today = new Date();
             const dates = [];
@@ -107,18 +110,29 @@ const Dashboard = () => {
                 </div>
                 <>
                     {
-                        !loading &&
-                        (
-                            events.map((events) => (
-                                <div key={events._id} className='w-full my-2'>
-                                    <div className='w-full h-72 border border-zinc-200 dark:border-zinc-800 rounded-3xl bg-zinc-100 dark:bg-zinc-900 overflow-hidden'>
-                                        {!loading &&
-                                            <img src={`data:${events.contentType};base64,${Buffer.from(events.widescreenPoster.data).toString('base64')}`} alt="banner" />
-                                        }
-                                    </div>
-                                </div>
-                            ))
-                        )
+                        (loading && message === null)
+                            ?
+                            <h1 className='saturate-200 font-sans flex items-center h-full text-center justify-center w-full text-5xl font-semibold text-sky-500'>
+                                Loading...
+                            </h1>
+                            :
+                            (!loading && (message === null) && (events.length !== (0 || null))) ?
+                                (
+                                    events.map((events) => (
+                                        <div key={events._id} className='w-full my-2'>
+                                            <div className='w-full h-72 border border-zinc-200 dark:border-zinc-800 rounded-3xl bg-zinc-100 dark:bg-zinc-900 overflow-hidden'>
+                                                {!loading &&
+                                                    <Image width={1} height={1} src={`data:${events.contentType};base64,${Buffer.from(events.widescreenPoster.data).toString('base64')}`} alt="banner" className='object-cover w-full h-full ' />
+                                                }
+                                            </div>
+                                        </div>
+                                    ))
+                                )
+                                :
+                                (message) &&
+                                <h1 className='saturate-150 flex items-center h-full text-center justify-center w-full text-5xl font-semibold text-rose-600'>
+                                    {message}
+                                </h1>
                     }
                 </>
 
