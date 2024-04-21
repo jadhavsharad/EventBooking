@@ -12,6 +12,8 @@ const Dashboard = () => {
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true)
     const [message, setMessage] = useState(null)
+    const [userEvents, setUserEvents] = useState([])
+    const [loadingUserEvents, setLoadingUserEvents] = useState(true);
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -40,6 +42,15 @@ const Dashboard = () => {
 
     }, [])
 
+    useEffect(() => {
+        axios
+            .get('http://localhost:8000/api/getAllUserRegistrations')
+            .then((response) => {
+                setUserEvents(response.data);
+                setLoadingUserEvents(false)
+            });
+
+    }, [])
 
 
     const authService = useMemo(() => new AuthService(), [])
@@ -139,7 +150,7 @@ const Dashboard = () => {
 
             </div>
             <div className='w-1/3 min-h-svh rounded-3xl border border-zinc-200 dark:border-zinc-800 hidden lg:flex flex-col gap-4 p-4'>
-                <h1 className='text-sm'>Upcoming Event Details</h1>
+                <h1 className='text-sm'>Registration By Users</h1>
                 <div className='flex items-center justify-between text-xs'>
                     {upcomingDates.map((date, index) => (
                         <div key={index} className={` flex flex-col items-center justify-center px-2 py-4 rounded-full ${(index === currentDateIndex) ? 'bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800' : 'transparent'}`}>
@@ -149,13 +160,21 @@ const Dashboard = () => {
                     ))}
                 </div>
                 <div>
-                    <div className='w-full flex flex-col active:scale-90 duration-500 select-none cursor-pointer hover:bg-zinc-100 hover:dark:bg-zinc-900 px-4 py-4 rounded-xl border border-zinc-200 dark:border-zinc-800'>
-                        <div className='flex justify-between items-center'>
-                            <h1 className='text-medium font-semibold'>AI Conclave</h1>
-                            <small className='text-zinc-500'>12/04/2024</small>
-                        </div>
-                        <small className='overflow-hidden truncate text-xs text-zinc-500'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis tenetur ratione quasi quas, sapiente veniam, laborum dolore deserunt incidunt quisquam exercitationem reprehenderit ipsa hic?</small>
-                    </div>
+                    {
+                        (!loadingUserEvents && (userEvents.length !== (0 || null)))
+                            ?
+                            userEvents.map((userEvent) => (
+                                <div key={userEvent._id} className='w-full flex flex-col active:scale-90 duration-500 select-none cursor-pointer hover:bg-zinc-100 hover:dark:bg-zinc-900 px-4 py-4 rounded-xl border border-zinc-200 dark:border-zinc-800'>
+                                    <div className='flex justify-between items-center'>
+                                        <h1 className='text-medium font-semibold'>{userEvent.name}</h1>
+                                        <small className='text-zinc-500'>{userEvent.regno}</small>
+                                    </div>
+                                    <small className='overflow-hidden truncate text-xs text-zinc-500'>Event Attending: {userEvent.eventName}</small>
+                                </div>
+                            ))
+                            :
+                            <p>No user events found.</p>
+                    }
                 </div>
                 <div>
                 </div>

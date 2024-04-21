@@ -25,6 +25,46 @@ const Event = () => {
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState(null)
 
+  const [submitMessaage, setSubmitMessage] = useState("")
+  const [userEventRegistrationData, setUserEventRegistrationData] = useState({
+    name: "",
+    email: "",
+    regno: "",
+    phone: "",
+    eventName: null
+  })
+
+  const handleData = (e) => {
+    const { name, value } = e.target
+    setUserEventRegistrationData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  }
+
+  const generateQRCode = async (e, eventName) => {
+    e.preventDefault(); // Prevent default form submission behavior
+    try {
+      setUserEventRegistrationData((prevData) => ({
+        ...prevData,
+        eventName: eventName
+      }));
+      await axios
+        .post("http://localhost:8000/api/userEventRegistrationData", { ...userEventRegistrationData, eventName: eventName })
+        .then(response => {
+          setSubmitMessage(response.data)
+          document.querySelector('#userEventForm').classList.add("hidden")
+          document.querySelector('#qrCode').classList.remove("hidden")
+        })
+        .catch(error => {
+          setMessage(error.response.data.message)
+        })
+
+    }
+    catch (error) {
+      console.log(error)
+    }
+  }
 
   useEffect(() => {
     setLoading(true)
@@ -50,22 +90,23 @@ const Event = () => {
 
   }, [])
 
-  console.log(eventData)
-
 
   const { isOpen: isModalOpen, onOpen: openModal, onOpenChange } = useDisclosure();
   const [selectedModalIndex, setSelectedModalIndex] = useState(null);
 
   const handlePopularModal = (index) => {
     setSelectedModalIndex(index);
+    setSubmitMessage("")
     openModal();
   };
   const handlePastModal = (index) => {
     setSelectedModalIndex(index);
+    setSubmitMessage("")
     openModal();
   };
   const handleUpcomingModal = (index) => {
     setSelectedModalIndex(index);
+    setSubmitMessage("")
     openModal();
   };
 
@@ -193,31 +234,26 @@ const Event = () => {
                         <ModalContent>
                           {(onClose) => (
                             <>
-
-                              <ModalHeader className="flex flex-col gap-1">Details</ModalHeader>
+                            
+                              <ModalHeader className="flex flex-col gap-1">Candidate Details</ModalHeader>
                               <ModalBody >
-                                <div>
-                                  <h1 className='font-bold text-center text-3xl'>{data.clubName}&apos;s </h1>
-                                  <h2 className='font-semibold text-center text-lg capitalize'>{data.eventName}</h2>
-                                </div>
-                                <div className='flex flex-row items-center justify-center'>
-                                  <div className="hidden sm:flex items-center justify-center w-1/2 aspect-square">
-                                    {/* <Image width={500} height={500} alt='image' src={`data:${data.contentType};base64,${Buffer.from(data.potraitPoster.data).toString('base64')}`} className='bg-blue-500 w-full h-full object-cover rounded-xl drop-shadow-xl' /> */}
-                                    <Image width={500} height={500} alt='image' src={`data:${data.contentType};base64,${Buffer.from(data.qrCode.data).toString('base64')}`} className='bg-blue-500 w-full object-cover rounded-xl drop-shadow-xl' />
-                                  </div>
-                                  <div className="sm:w-1/2 aspect-square flex flex-col items-center justify-between gap-2 px-2 text-justify">
-                                    <small className='overflow-scroll scrollbar-hide w-full h-full'>{data.discription}</small>
-                                  </div>
-                                </div>
-                                <div className='w-full flex justify-end'>
-                                <button className='bg-black px-6 w-1/2 font-semibold text-xs py-2.5 rounded-full text-white active:scale-90 duration-300'> <a href={data.registrationLink} target='about:blank'>Register {data.registrationFees} </a> </button>
-
-                                </div>
+                                  <Image id='qrCode' width={200} height={300} src={`data:${data.contentType};base64,${Buffer.from(data.qrCode.data).toString('base64')}`} alt='image' className='h-full w-full rounded-[inherit] object-cover hidden' />
+                                  <form id='userEventForm' className='flex flex-col gap-2' onSubmit={(e) => generateQRCode(e, data.eventName)}>
+                                    <label htmlFor="name">Name</label>
+                                    <input required onChange={handleData} className='bg-zinc-100 border border-zinc-200 px-4 py-2 outline-none rounded-lg' type="text" name="name" id="name" />
+                                    <label htmlFor="regno">Regno</label>
+                                    <input required onChange={handleData} className='bg-zinc-100 border border-zinc-200 px-4 py-2 outline-none rounded-lg' type="text" name="regno" id="regno" />
+                                    <label htmlFor="email">Email</label>
+                                    <input required onChange={handleData} className='bg-zinc-100 border border-zinc-200 px-4 py-2 outline-none rounded-lg' type="email" name="email" id="email" />
+                                    <label htmlFor="phone">Phone</label>
+                                    <input required onChange={handleData} className='bg-zinc-100 border border-zinc-200 px-4 py-2 outline-none rounded-lg' type="text" name="phone" id="phone" />
+                                    <Button color='success' type='submit' className='my-4'>
+                                      Submit
+                                    </Button>
+                                  </form>
                               </ModalBody>
-                              <ModalFooter>
-                                <Button color="danger" variant="light" onPress={onClose}>
-                                  Close
-                                </Button>
+                              <ModalFooter className='text-blue-600 saturate-150'>
+                                {submitMessaage}
                               </ModalFooter>
                             </>
                           )}

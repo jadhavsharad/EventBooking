@@ -5,6 +5,7 @@ const moongose = require("mongoose");
 const db = require("./model");
 const Role = db.role;
 const Event = require("./model/clubData.model");
+const userEvent = require("./model/userEventRegistrationData.model")
 const multer = require("multer");
 const { authJwt } = require("./middlewares");
 
@@ -94,6 +95,20 @@ app.get("/api/getEvents", authJwt.verifyToken, async (req, res) => {
   }
 });
 
+
+app.get("/api/getAllUserRegistrations", async (req, res) => {
+  try {
+    const allRegistrations = await userEvent.find();
+    if(allRegistrations.length < 1){
+      return res.status(401).send({message: "No User Registration Found"})
+    }
+    res.status(200).send(allRegistrations);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error Fetching User Events");
+  }
+});
+
 app.get("/api/getUserEvents", async (req, res) => {
   try {
     const events = await Event.find(
@@ -132,6 +147,25 @@ app.get("/api/getEventBanners", async (req, res) => {
     res.status(500).send("Error Finding Banner");
   }
 });
+
+
+
+app.post("/api/userEventRegistrationData", async (req, res) => {
+  console.log(req.body)
+  try {
+    const eventData = req.body;
+    const newUserEvent = new userEvent(eventData);
+    await newUserEvent.save();
+    res.status(201).send("Event registration successful.");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+
+
+
 // routes
 require("./routes/auth.routes")(app);
 require("./routes/user.routes")(app);
